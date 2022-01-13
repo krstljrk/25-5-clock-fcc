@@ -1,0 +1,46 @@
+@import '~bootstrap/scss/bootstrap.scss';
+@import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap');
+
+@mixin equal-padding ($x) {
+    padding: $x $x $x $x;
+}
+
+@mixin equal-margin ($x) {
+    margin: $x $x $x $x;
+}
+
+$background: #57606f;
+$container: #A3CB38;
+$border-color: black;
+$display-font: 'Share Tech Mono', monospace;
+
+body {
+    background-color: $background;
+}
+
+.App {
+    display: flex;
+    font-family: $display-font;
+    justify-content: center;
+    align-items: center;
+    margin-top: 15em;
+
+    .calculator-container {
+        position: relative;
+        width: 340px;
+        height: auto;
+        border: 1px solid $border-color;
+
+        .display {
+            background-color: black;
+            text-align: right;
+            color: white;
+            height: 75px;
+            padding: 10px 15px 15px 10px;
+
+            .last-row {
+                font-size: 26px;
+            }
+        }
+    }
+}
