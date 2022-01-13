@@ -1,5 +1,6 @@
 @import '~bootstrap/scss/bootstrap.scss';
 @import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Libre+Baskerville&display=swap');
 
 @mixin equal-padding ($x) {
     padding: $x $x $x $x;
@@ -9,10 +10,11 @@
     margin: $x $x $x $x;
 }
 
-$background: #57606f;
-$container: #A3CB38;
+$background: #778ca3;
+$container: #82ccdd;
 $border-color: black;
 $display-font: 'Share Tech Mono', monospace;
+$text-font: 'Libre Baskerville', serif;
 
 body {
     background-color: $background;
@@ -20,26 +22,94 @@ body {
 
 .App {
     display: flex;
-    font-family: $display-font;
+    font-family: $text-font;
     justify-content: center;
     align-items: center;
-    margin-top: 15em;
+    margin-top: 13em;
 
-    .calculator-container {
+    h1 {
+        text-align: center;
+        font-size: 70px;
+        margin: 0 0 20px 0;
+    }
+
+    .clock-container {
+        background-color: $container;
         position: relative;
-        width: 340px;
+        width: 840px;
         height: auto;
         border: 1px solid $border-color;
 
-        .display {
-            background-color: black;
-            text-align: right;
-            color: white;
-            height: 75px;
-            padding: 10px 15px 15px 10px;
 
-            .last-row {
-                font-size: 26px;
+        .panel {
+            display: grid; 
+            grid-template-columns: 1fr 1fr 1fr; 
+            grid-template-rows: 1fr; 
+            gap: 0px 0px; 
+            grid-template-areas: 
+                ". . ."; 
+            margin: 20px 40px 20px 40px;
+            text-align: center;
+
+            .center-panel {
+
+                button {
+                    font-size: 30px;
+                    width: auto;
+                }
+            }
+
+            .control-panel {
+                position: relative;
+                display: grid; 
+                grid-template-columns: 1fr; 
+                grid-template-rows: 1fr 1fr; 
+                gap: 0px 0px; 
+                grid-template-areas: 
+                    "."
+                    "."; 
+                justify-content: center;
+                align-items: center;
+                
+                h4 {
+                    font-size: 35px;
+                }
+
+                .btns-panel {
+                    display: grid; 
+                    grid-template-columns: 1fr 1fr; 
+                    grid-template-rows: 1fr; 
+                    gap: 0px 0px; 
+
+
+                    button {
+                        font-size: 25px;
+                        margin: 0 35px 15px 30px;
+                        width: auto;
+                        float: right;
+                    }
+                }
+
+                .time-indicator {
+                    font-size: 30px;
+                }
+
+                
+            }
+        }
+
+        .timer {
+            border: 1px solid black;
+            border-radius: 50%;
+            margin: 0 auto;
+            margin-bottom: 50px;
+            width: 50%;
+            text-align: center;
+            font-family: $display-font;
+            background-color: $background;
+
+            #time-left {
+                font-size: 90px;
             }
         }
     }
