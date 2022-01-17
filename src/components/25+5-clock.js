@@ -101,6 +101,7 @@ export default class Clock extends React.Component {
 
           // If break's time runs out
           if (totalMinutes === 0 && actualSeconds === 0 && this.state.sessionLabel === "Break") {
+            this.audioSound.play();
             this.setState({
               sessionLabel: "Session",
             })
