@@ -1,16 +1,17 @@
 import React from "react";
 import "../stylesheets/styles.scss";
 
+let timer;
+
 export default class Clock extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
       break: 5,
       session: 25,
-      seconds: "00",
-      current: `${this.state.session}:${this.state.seconds}`,
+      current: "25:00",
       sessionLabel: "Session",
-      paused: true,
+      timerBool: false
     };
 
     this.incrementBreak = this.incrementBreak.bind(this);
@@ -22,7 +23,7 @@ export default class Clock extends React.Component {
   }
 
   incrementBreak = () => {
-    if (this.state.break >= 0 && this.state.break < 60) {
+    if (this.state.break >= 1 && this.state.break < 60) {
       this.setState({
         break: this.state.break + 1,
       });
@@ -30,45 +31,81 @@ export default class Clock extends React.Component {
   };
 
   incrementSession = () => {
-    if (this.state.session >= 0 && this.state.session < 60) {
-        this.setState({
+    if (this.state.session >= 1 && this.state.session < 60) {
+      this.setState({
         session: this.state.session + 1,
-        });
+      });
     }
   };
 
   decrementBreak = () => {
-    if (this.state.break > 0 && this.state.break <= 60) {
-        this.setState({
-            break: this.state.break - 1,
-        });
+    if (this.state.break > 1 && this.state.break <= 60) {
+      this.setState({
+        break: this.state.break - 1,
+      });
     }
   };
 
   decrementSession = () => {
-    if (this.state.session > 0 && this.state.session <= 60) {
-        this.setState({
+    if (this.state.session > 1 && this.state.session <= 60) {
+      this.setState({
         session: this.state.session - 1,
-        });
+      });
+    }
+  };
+ 
+  startStop = () => {
+    let time = "";
+    let minutes = Number(this.state.session);
+    let seconds = 0;
+    let secondString = "00";
+
+    if (this.state.timerBool) {
+      console.log("stop counting");
+      clearInterval(timer);
+      this.setState({
+        timerBool: false,
+      });
+    } else {
+      console.log("start counting");
+      this.setState({
+        timerBool: true,
+      });
+
+      timer = setInterval(() => {
+          console.log("tick-tock"); 
+          if (seconds === 0) {
+            minutes--;
+            seconds = 60;
+          }
+    
+          seconds--;
+    
+          if (seconds < 10) {
+            secondString = "0" + seconds;
+          } else {
+            secondString = String(seconds);
+          }
+    
+          
+    
+          time = `${minutes}:${secondString}`;
+          console.log(time);
+    
+          this.setState({
+            current: time,
+          });
+      }, 100);
     }
   };
 
-  startStop = () => {
-      if (!this.state.paused) {
-          let minutes;
-          let seconds;
-          setInterval(() => {
-
-          }, 1000)
-      }
-  };
-
   reset = () => {
+    clearInterval(timer);
     this.setState({
-      break: "5",
-      session: "25",
+      break: 5,
+      session: 25,
       current: "25:00",
-      paused: true,
+      timerBool: false,
     });
   };
 
@@ -81,7 +118,7 @@ export default class Clock extends React.Component {
         <div className="clock-container">
           <div className="row panel">
             <div className="control-panel col-xs-4">
-              <h4 id="break-label">Break</h4>
+              <h4 id="break-label">Break length</h4>
               <div id="break-length" className="time-indicator">
                 {this.state.break}
               </div>
@@ -123,7 +160,7 @@ export default class Clock extends React.Component {
               </button>
             </div>
             <div className="control-panel col-xs-4">
-              <h4 id="session-label">Session</h4>
+              <h4 id="session-label">Session length</h4>
               <div id="session-length" className="time-indicator">
                 {this.state.session}
               </div>
