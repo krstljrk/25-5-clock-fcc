@@ -7,11 +7,14 @@ export default class Clock extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
+      minutes: 0,
+      seconds: 0,
       break: 5,
       session: 25,
       current: "25:00",
       sessionLabel: "Session",
-      timerBool: false
+      timerBool: false,
+      timerPaused: false
     };
 
     this.incrementBreak = this.incrementBreak.bind(this);
@@ -23,7 +26,7 @@ export default class Clock extends React.Component {
   }
 
   incrementBreak = () => {
-    if (this.state.break >= 1 && this.state.break < 60) {
+    if (this.state.break >= 1 && this.state.break < 60 && !this.state.timerBool) {
       this.setState({
         break: this.state.break + 1,
       });
@@ -31,7 +34,7 @@ export default class Clock extends React.Component {
   };
 
   incrementSession = () => {
-    if (this.state.session >= 1 && this.state.session < 60) {
+    if (this.state.session >= 1 && this.state.session < 60 && !this.state.timerBool) {
       this.setState({
         session: this.state.session + 1,
       });
@@ -39,7 +42,7 @@ export default class Clock extends React.Component {
   };
 
   decrementBreak = () => {
-    if (this.state.break > 1 && this.state.break <= 60) {
+    if (this.state.break > 1 && this.state.break <= 60 && !this.state.timerBool) {
       this.setState({
         break: this.state.break - 1,
       });
@@ -47,7 +50,7 @@ export default class Clock extends React.Component {
   };
 
   decrementSession = () => {
-    if (this.state.session > 1 && this.state.session <= 60) {
+    if (this.state.session > 1 && this.state.session <= 60 && !this.state.timerBool) {
       this.setState({
         session: this.state.session - 1,
       });
@@ -55,57 +58,95 @@ export default class Clock extends React.Component {
   };
  
   startStop = () => {
-    let time = "";
-    let minutes = Number(this.state.session);
-    let seconds = 0;
+    let time;
+    let totalMinutes = this.state.session;
+    let actualSeconds = this.state.seconds;
     let secondString = "00";
 
     if (this.state.timerBool) {
       console.log("stop counting");
+
       clearInterval(timer);
+
       this.setState({
         timerBool: false,
+        timerPaused: true
       });
     } else {
       console.log("start counting");
+
       this.setState({
         timerBool: true,
       });
 
       timer = setInterval(() => {
+        if(this.state.timerPaused) {
+          totalMinutes = this.state.minutes;
+          actualSeconds = this.state.seconds;
+
+          this.setState({
+            timerPaused: false
+          })
+        }
           console.log("tick-tock"); 
-          if (seconds === 0) {
-            minutes--;
-            seconds = 60;
+          // If session's time runs out:
+          if (totalMinutes === 0 && actualSeconds === 0 && this.state.sessionLabel === "Session") {
+            this.audioSound.play();
+            this.setState({
+              sessionLabel: "Break",
+            })
+
+            totalMinutes = Number(this.state.break);
+          }
+
+          // If break's time runs out
+          if (totalMinutes === 0 && actualSeconds === 0 && this.state.sessionLabel === "Break") {
+            this.setState({
+              sessionLabel: "Session",
+            })
+
+            totalMinutes = Number(this.state.session);
+          }
+
+          // Decrease minutes if seconds reach 0
+          if (actualSeconds === 0) {
+            totalMinutes--;
+            actualSeconds = 60;
           }
     
-          seconds--;
+          actualSeconds--;
     
-          if (seconds < 10) {
-            secondString = "0" + seconds;
+          if (actualSeconds < 10) {
+            secondString = "0" + actualSeconds;
           } else {
-            secondString = String(seconds);
+            secondString = String(actualSeconds);
           }
     
-          
-    
-          time = `${minutes}:${secondString}`;
-          console.log(time);
+          time = `${totalMinutes}:${secondString}`;
     
           this.setState({
             current: time,
+            minutes: totalMinutes,
+            seconds: actualSeconds
           });
-      }, 100);
+      }, 1000);
     }
   };
 
   reset = () => {
     clearInterval(timer);
+    this.audioSound.pause();
+    this.audioSound.currentTime = 0;
+
     this.setState({
+      minutes: 0,
+      seconds: 0,
       break: 5,
       session: 25,
       current: "25:00",
+      sessionLabel: "Session",
       timerBool: false,
+      timerPaused: false
     });
   };
 
@@ -194,6 +235,14 @@ export default class Clock extends React.Component {
         <div className="footer">
           <h6>freeCodeCamp project - by Kristel Juurik</h6>
         </div>
+        <audio
+          id="beep"
+          preload="auto"
+          ref={(audio) => {
+            this.audioSound = audio;
+          }}
+          src="https://cdn.staticcrate.com/stock-hd/audio/soundscrate-magical-hit-with-sheen-1.mp3"
+        />
       </div>
     );
   }
